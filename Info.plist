@@ -24,6 +24,24 @@
 			<key>LSTypeIsPackage</key>
 			<integer>0</integer>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>oramod</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>OpenRA.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>OpenRA Mod</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>net.openra.oramod</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
+		</dict>
 	</array>
 	<key>CFBundleDisplayName</key>
 	<string>OpenRA</string>
@@ -78,6 +96,25 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>orarep</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>OpenRA Mod</string>
+			<key>UTTypeIconFile</key>
+			<string>OpenRA.icns</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.openra.oramod</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>oramod</string>
 				</array>
 			</dict>
 		</dict>

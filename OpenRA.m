@@ -65,6 +65,8 @@ NSTask *gameTask;
 	NSArray *gameArgs = [NSArray array];
 	if ([[filename pathExtension] isEqualToString:@"orarep"])
 		gameArgs = [NSArray arrayWithObject: [NSString stringWithFormat: @"Launch.Replay=%@", filename]];
+	else if ([[filename pathExtension] isEqualToString:@"oramod"])
+		gameArgs = [NSArray arrayWithObject: [NSString stringWithFormat: @"Game.Mod=%@", filename]];
 
 	[self launchGameWithArgs: gameArgs];
 
