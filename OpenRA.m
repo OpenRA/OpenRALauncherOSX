@@ -136,9 +136,12 @@ NSTask *gameTask;
 	NSString *gamePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: @"Contents/Resources/"];
 
 	NSString *launchPath = [exePath stringByAppendingPathComponent: @"launchgame"];
+	NSString *appPath = [exePath stringByAppendingPathComponent: @"OpenRA"];
+
 	NSMutableArray *launchArgs = [NSMutableArray arrayWithCapacity: [gameArgs count] + 2];
 	[launchArgs addObject: @"--debug"];
 	[launchArgs addObject: [gamePath stringByAppendingPathComponent: gameName]];
+	[launchArgs addObject: [NSString stringWithFormat:@"Engine.LaunchPath=\"%@\"", appPath]];
 	[launchArgs addObjectsFromArray: gameArgs];
 
 	NSLog(@"Running launchgame with arguments:");
