@@ -62,11 +62,11 @@ NSTask *gameTask;
 // Application was launched via a file association
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-	NSArray *gameArgs = [NSArray array];
+	NSMutableArray *gameArgs = [[[NSProcessInfo processInfo] arguments] mutableCopy];
 	if ([[filename pathExtension] isEqualToString:@"orarep"])
-		gameArgs = [NSArray arrayWithObject: [NSString stringWithFormat: @"Launch.Replay=%@", filename]];
+		[gameArgs addObject: [NSString stringWithFormat: @"Launch.Replay=%@", filename]];
 	else if ([[filename pathExtension] isEqualToString:@"oramod"])
-		gameArgs = [NSArray arrayWithObject: [NSString stringWithFormat: @"Game.Mod=%@", filename]];
+		[gameArgs addObject: [NSString stringWithFormat: @"Game.Mod=%@", filename]];
 
 	[self launchGameWithArgs: gameArgs];
 
@@ -76,7 +76,7 @@ NSTask *gameTask;
 // Application was launched via a URL handler
 - (void)getUrl:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
 {
-	NSArray *gameArgs = [NSArray array];
+	NSMutableArray *gameArgs = [[[NSProcessInfo processInfo] arguments] mutableCopy];
 
 	NSString *url = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
 	if ([url hasPrefix:@"openra://"])
@@ -86,7 +86,7 @@ NSTask *gameTask;
 		NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
 
 		if ([parts count] == 2 && [formatter numberFromString: [parts objectAtIndex:1]] != nil)
-			gameArgs = [NSArray arrayWithObject: [NSString stringWithFormat: @"Launch.Connect=%@", trimmed]];
+			[gameArgs addObject: [NSString stringWithFormat: @"Launch.Connect=%@", trimmed]];
 
 		[formatter release];
 	}
@@ -103,7 +103,7 @@ NSTask *gameTask;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-	[self launchGameWithArgs: [NSArray array]];
+	[self launchGameWithArgs: [[NSProcessInfo processInfo] arguments]];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed: (NSApplication *)theApplication
