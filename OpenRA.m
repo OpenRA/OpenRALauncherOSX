@@ -59,20 +59,6 @@ NSTask *gameTask;
 		[[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"http://wiki.openra.net/FAQ"]];
 }
 
-// Application was launched via a file association
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
-{
-	NSMutableArray *gameArgs = [[[NSProcessInfo processInfo] arguments] mutableCopy];
-	if ([[filename pathExtension] isEqualToString:@"orarep"])
-		[gameArgs addObject: [NSString stringWithFormat: @"Launch.Replay=%@", filename]];
-	else if ([[filename pathExtension] isEqualToString:@"oramod"])
-		[gameArgs addObject: [NSString stringWithFormat: @"Game.Mod=%@", filename]];
-
-	[self launchGameWithArgs: gameArgs];
-
-	return YES;
-}
-
 // Application was launched via a URL handler
 - (void)getUrl:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
 {
