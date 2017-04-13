@@ -6,7 +6,7 @@ launcher: all
 	mv OpenRA launchgame OpenRA.app/Contents/MacOS
 	echo "APPL????" > OpenRA.app/Contents/PkgInfo
 	cp Info.plist OpenRA.app/Contents
-	cp OpenRA.icns fonts.conf dependencies/* OpenRA.app/Contents/Resources
+	cp fonts.conf dependencies/* OpenRA.app/Contents/Resources
 	ln -s /Library/Frameworks/Mono.framework/Libraries/libgdiplus.dylib OpenRA.app/Contents/Resources/libgdiplus.dylib
 	zip launcher -r -9 OpenRA.app --quiet --symlinks
 	rm -rf OpenRA.app
