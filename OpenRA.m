@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2015 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2017 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation. For more information,
@@ -22,12 +22,28 @@
 BOOL launched = NO;
 NSTask *gameTask;
 
+- (NSString *)modName
+{
+	NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
+	if (plist)
+	{
+		NSString *title = [plist objectForKey:@"CFBundleDisplayName"];
+		if (title && [title length] > 0)
+			return title;
+	}
+
+	return @"OpenRA";
+}
+
 - (void)showMonoPromptWithMinimumVersion: (NSString *)monoMinVersion
 {
+	NSString *modName = [self modName];
+	NSString *title = [NSString stringWithFormat: @"Cannot launch %@", modName];
+	NSString *message = [NSString stringWithFormat: @"%@ requires Mono %@ or later. Please install the Mono MDK package and try again.", modName, monoMinVersion];
+
 	NSAlert *alert = [[NSAlert alloc] init];
-	[alert setMessageText:@"Cannot launch OpenRA"];
-	NSString *msg = [NSString stringWithFormat: @"OpenRA requires Mono %@ or later. Please install the Mono MDK package and try again.", monoMinVersion];
-	[alert setInformativeText:msg];
+	[alert setMessageText:title];
+	[alert setInformativeText:message];
 	[alert addButtonWithTitle:@"Download Mono"];
 	[alert addButtonWithTitle:@"Quit"];
 	NSInteger answer = [alert runModal];
@@ -39,9 +55,12 @@ NSTask *gameTask;
 
 - (void)showCrashPrompt
 {
+	NSString *modName = [self modName];
+	NSString *message = [NSString stringWithFormat: @"%@ has encountered a fatal error and must close.\nPlease refer to the crash logs and FAQ for more information.", modName];
+
 	NSAlert *alert = [[NSAlert alloc] init];
 	[alert setMessageText:@"Fatal Error"];
-	[alert setInformativeText:@"OpenRA has encountered a fatal error and must close.\nPlease refer to the crash logs and FAQ for more information."];
+	[alert setInformativeText:message];
 	[alert addButtonWithTitle:@"View Logs"];
 	[alert addButtonWithTitle:@"View FAQ"];
 	[alert addButtonWithTitle:@"Quit"];
@@ -56,25 +75,42 @@ NSTask *gameTask;
 		[[NSWorkspace sharedWorkspace] selectFile: logFile inFileViewerRootedAtPath: logDir];
 	}
 	else if (answer == NSAlertSecondButtonReturn)
-		[[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"http://wiki.openra.net/FAQ"]];
+	{
+		NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
+		if (plist)
+		{
+			NSString *faqUrl = [plist objectForKey:@"FaqUrl"];
+			if (faqUrl && [faqUrl length] > 0)
+				[[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:faqUrl]];
+		}
+	}
 }
 
 // Application was launched via a URL handler
 - (void)getUrl:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
 {
 	NSMutableArray *gameArgs = [[[NSProcessInfo processInfo] arguments] mutableCopy];
-
+	NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
 	NSString *url = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
-	if ([url hasPrefix:@"openra://"])
+
+	if (plist)
 	{
-		NSString *trimmed = [url substringFromIndex:9];
-		NSArray *parts = [trimmed componentsSeparatedByString:@":"];
-		NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+		NSString *joinServerUrl = [plist objectForKey:@"JoinServerUrlScheme"];
+		if (joinServerUrl && [joinServerUrl length] > 0)
+		{
+			NSString *prefix = [joinServerUrl stringByAppendingString: @"://"];
+			if ([url hasPrefix: prefix])
+			{
+				NSString *trimmed = [url substringFromIndex:[prefix length]];
+				NSArray *parts = [trimmed componentsSeparatedByString:@":"];
+				NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
 
-		if ([parts count] == 2 && [formatter numberFromString: [parts objectAtIndex:1]] != nil)
-			[gameArgs addObject: [NSString stringWithFormat: @"Launch.Connect=%@", trimmed]];
+				if ([parts count] == 2 && [formatter numberFromString: [parts objectAtIndex:1]] != nil)
+					[gameArgs addObject: [NSString stringWithFormat: @"Launch.Connect=%@", trimmed]];
 
-		[formatter release];
+				[formatter release];
+			}
+		}
 	}
 
 	[self launchGameWithArgs: gameArgs];
@@ -82,9 +118,18 @@ NSTask *gameTask;
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
-	// Register for url and file events
-	LSSetDefaultHandlerForURLScheme((CFStringRef)@"openra", (CFStringRef)@"net.openra.launcher");
-	[[NSAppleEventManager sharedAppleEventManager] setEventHandler:self andSelector:@selector(getUrl:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
+	// Register for url events
+	NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
+	if (plist)
+	{
+		NSString *joinServerUrl = [plist objectForKey:@"JoinServerUrlScheme"];
+		NSString *bundleIdentifier = [plist objectForKey:@"CFBundleIdentifier"];
+		if (joinServerUrl && [joinServerUrl length] > 0 && bundleIdentifier)
+		{
+			LSSetDefaultHandlerForURLScheme((CFStringRef)joinServerUrl, (CFStringRef)bundleIdentifier);
+			[[NSAppleEventManager sharedAppleEventManager] setEventHandler:self andSelector:@selector(getUrl:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];			
+		}
+	}
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -107,8 +152,9 @@ NSTask *gameTask;
 
 	launched = YES;
 
-	// Default values - can be overriden by setting MonoMinVersion and MonoGameExe in Info.plist
+	// Default values - can be overriden by setting certain keys Info.plist
 	NSString *gameName = @"OpenRA.Game.exe";
+	NSString *modId = nil;
 
 	NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
 	if (plist)
@@ -116,6 +162,10 @@ NSTask *gameTask;
 		NSString *exeValue = [plist objectForKey:@"MonoGameExe"];
 		if (exeValue && [exeValue length] > 0)
 			gameName = exeValue;
+
+		NSString *modIdValue = [plist objectForKey:@"ModId"];
+		if (modIdValue && [modIdValue length] > 0)
+			modId = modIdValue;
 	}
 
 	NSString *exePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: @"Contents/MacOS/"];
@@ -128,6 +178,10 @@ NSTask *gameTask;
 	[launchArgs addObject: @"--debug"];
 	[launchArgs addObject: [gamePath stringByAppendingPathComponent: gameName]];
 	[launchArgs addObject: [NSString stringWithFormat:@"Engine.LaunchPath=\"%@\"", appPath]];
+
+	if (modId)
+		[launchArgs addObject: [NSString stringWithFormat:@"Game.Mod=%@", modId]];
+
 	[launchArgs addObjectsFromArray: gameArgs];
 
 	NSLog(@"Running launchgame with arguments:");

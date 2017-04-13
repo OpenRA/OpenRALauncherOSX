@@ -5,17 +5,17 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
-	<string>OpenRA</string>
+	<string>{MOD_NAME}</string>
 	<key>CFBundleExecutable</key>
 	<string>OpenRA</string>
 	<key>CFBundleIconFile</key>
 	<string>OpenRA.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.openra.launcher</string>
+	<string>net.openra.mod.{MOD_ID}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>OpenRA</string>
+	<string>{MOD_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -35,9 +35,15 @@
 			<string>OpenRA Server</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>openra</string>
+				<string>{JOIN_SERVER_URL_SCHEME}</string>
 			</array>
 		</dict>
 	</array>
+	<key>ModId</key>
+	<string>{MOD_ID}</string>
+	<key>FaqUrl</key>
+	<string>{FAQ_URL}</string>
+	<key>JoinServerUrlScheme</key>
+	<string>{JOIN_SERVER_URL_SCHEME}</string>
 </dict>
 </plist>
