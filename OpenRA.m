@@ -114,6 +114,7 @@ NSTask *gameTask;
 	}
 
 	[self launchGameWithArgs: gameArgs];
+    [gameArgs release];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
