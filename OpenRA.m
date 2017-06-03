@@ -7,6 +7,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#include <dlfcn.h>
 
 #define RET_MONO_NOT_FOUND 131
 #define RET_MONO_INIT_ERROR 132
@@ -174,11 +175,12 @@ NSTask *gameTask;
 
 	NSString *launchPath = [exePath stringByAppendingPathComponent: @"launchgame"];
 	NSString *appPath = [exePath stringByAppendingPathComponent: @"OpenRA"];
+	NSString *engineLaunchPath = [self resolveTranslocatedPath: appPath];
 
 	NSMutableArray *launchArgs = [NSMutableArray arrayWithCapacity: [gameArgs count] + 2];
 	[launchArgs addObject: @"--debug"];
 	[launchArgs addObject: [gamePath stringByAppendingPathComponent: gameName]];
-	[launchArgs addObject: [NSString stringWithFormat:@"Engine.LaunchPath=\"%@\"", appPath]];
+	[launchArgs addObject: [NSString stringWithFormat:@"Engine.LaunchPath=\"%@\"", engineLaunchPath]];
 
 	if (modId)
 		[launchArgs addObject: [NSString stringWithFormat:@"Game.Mod=%@", modId]];
@@ -202,6 +204,49 @@ NSTask *gameTask;
 	];
 
 	[gameTask launch];
+}
+
+- (NSString *)resolveTranslocatedPath: (NSString *)path
+{
+	// macOS 10.12 introduced the "App Translocation" feature, which runs quarantined applications
+	// from a transient read-only disk image.  The read-only image isn't a problem, but the transient
+	// path breaks the mod registration/switching feature.
+	// This resolves the original path which can then be written into the mod metadata for future
+	// launches (which will then be re-translocated)
+
+	// Running on macOS < 10.12
+	if (floor(NSAppKitVersionNumber) <= 1404)
+		return path;
+
+	void *handle = dlopen("/System/Library/Frameworks/Security.framework/Security", RTLD_LAZY);
+
+	// Failed to load security framework
+	if (handle == NULL)
+		return path;
+
+	Boolean (*mySecTranslocateIsTranslocatedURL)(CFURLRef path, bool *isTranslocated, CFErrorRef * __nullable error);
+	mySecTranslocateIsTranslocatedURL = dlsym(handle, "SecTranslocateIsTranslocatedURL");
+
+	CFURLRef __nullable (*mySecTranslocateCreateOriginalPathForURL)(CFURLRef translocatedPath, CFErrorRef * __nullable error);
+	mySecTranslocateCreateOriginalPathForURL = dlsym(handle, "SecTranslocateCreateOriginalPathForURL");
+
+	// Failed to resolve required functions
+	if (mySecTranslocateIsTranslocatedURL == NULL || mySecTranslocateCreateOriginalPathForURL == NULL)
+		return path;
+
+	bool isTranslocated = false;
+	CFURLRef pathURLRef = (__bridge CFURLRef)[NSURL URLWithString: path];
+
+	if (mySecTranslocateIsTranslocatedURL(pathURLRef, &isTranslocated, NULL))
+	{
+		if (isTranslocated)
+		{
+			CFURLRef resolvedURL = mySecTranslocateCreateOriginalPathForURL(pathURLRef, NULL);
+			path = [(NSURL *)(resolvedURL) path];
+		}
+	}
+
+	return path;
 }
 
 - (void)taskExited:(NSNotification *)note
