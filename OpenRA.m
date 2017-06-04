@@ -40,7 +40,7 @@ NSTask *gameTask;
 {
 	NSString *modName = [self modName];
 	NSString *title = [NSString stringWithFormat: @"Cannot launch %@", modName];
-	NSString *message = [NSString stringWithFormat: @"%@ requires Mono %@ or later. Please install the Mono MDK package and try again.", modName, monoMinVersion];
+	NSString *message = [NSString stringWithFormat: @"%@ requires Mono %@ or later. Please install Mono and try again.", modName, monoMinVersion];
 
 	NSAlert *alert = [[NSAlert alloc] init];
 	[alert setMessageText:title];
