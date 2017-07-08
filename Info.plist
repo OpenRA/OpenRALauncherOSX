@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>OpenRA</string>
 	<key>CFBundleIconFile</key>
-	<string>OpenRA.icns</string>
+	<string>{MOD_ID}.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>net.openra.mod.{MOD_ID}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
