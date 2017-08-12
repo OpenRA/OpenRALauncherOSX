@@ -18,12 +18,12 @@ launcher: all
 OpenRA: OpenRA.m
 	@echo "Building OpenRA"
 	@mkdir -p build
-	@clang -m32 OpenRA.m -o build/OpenRA -framework AppKit -mmacosx-version-min=10.6
+	@clang -m32 OpenRA.m -o build/OpenRA -framework AppKit -mmacosx-version-min=10.7
 
 launchgame: launchgame.m
 	@echo "Building launchgame"
 	@mkdir -p build
-	@clang -m32 launchgame.m -o build/launchgame -framework AppKit -mmacosx-version-min=10.6
+	@clang -m32 launchgame.m -o build/launchgame -framework AppKit -mmacosx-version-min=10.7
 
 clean:
 	@rm -rf build
