@@ -66,7 +66,7 @@ int main (int argc, char **argv)
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 	// Default value - can be overriden by setting MonoMinVersion in Info.plist
-	NSString *req_mono_version = @"3.2";
+	NSString *req_mono_version = @"4.6";
 
 	NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
 	if (plist)

@@ -273,7 +273,7 @@ NSTask *gameTask;
 
 	if (ret == RET_MONO_NOT_FOUND || ret == RET_MONO_INIT_ERROR || ret == RET_MONO_VERSION_OUTDATED)
 	{
-		NSString *monoMinVersion = @"3.2";
+		NSString *monoMinVersion = @"4.6";
 		NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
 		if (plist)
 		{
