@@ -235,7 +235,7 @@ NSTask *gameTask;
 		return path;
 
 	bool isTranslocated = false;
-	CFURLRef pathURLRef = (__bridge CFURLRef)[NSURL URLWithString: path];
+	CFURLRef pathURLRef = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, (__bridge CFStringRef)path, kCFURLPOSIXPathStyle, false);
 
 	if (mySecTranslocateIsTranslocatedURL(pathURLRef, &isTranslocated, NULL))
 	{
@@ -246,6 +246,7 @@ NSTask *gameTask;
 		}
 	}
 
+	CFRelease(pathURLRef);
 	return path;
 }
 
