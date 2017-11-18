@@ -1,9 +1,6 @@
-This repository holds the native OSX components of OpenRA.
+# OpenRALauncherOSX [![Travis CI build status](https://travis-ci.org/OpenRA/OpenRALauncherOSX.svg?branch=master)](https://travis-ci.org/OpenRA/OpenRALauncherOSX)
 
-The Makefile includes targets that self-document and automate the dependency compilation.
+This repository holds the native OSX components for [OpenRA](https://github.com/OpenRA/OpenRA) and the [OpenRA Mod SDK](https://github.com/OpenRA/OpenRAModSDK).
 
-After updating the launcher code or dependencies you must:
-
-1. Use `make launcher` to build a zip containing the launcher app template.
-2. Upload the template as a new release.
-3. Update `packaging/osx/buildpackage.sh` in the main OpenRA repository to use the new release package.
+Code is automatically compiled using Travis CI and deployed to a GitHub Release.
+When new changes are merged, push a new tag and then update the tag references in [fetch-thirdparty-deps-osx.sh](https://github.com/OpenRA/OpenRA/blob/bleed/thirdparty/fetch-thirdparty-deps-osx.sh), [buildpackage.sh](https://github.com/OpenRA/OpenRA/blob/bleed/packaging/osx/buildpackage.sh), and [mod.config](https://github.com/OpenRA/OpenRAModSDK/blob/master/mod.config).
