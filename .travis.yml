@@ -1,0 +1,37 @@
+os: osx
+
+# Only watch the development branch and tagged release.
+branches:
+ only:
+   - /^osx-launcher-.*$/
+   - master
+
+# Compile only the binaries on default pushes
+script:
+ - make all
+
+# Compile dependencies and build the launcher.zip before deploying
+before_deploy:
+ - make sdl2 lua
+ - make launcher
+
+deploy:
+  provider: releases
+  api_key: ${GH_DEPLOY_API_KEY}
+  file:
+    - launcher.zip
+    - dependencies/libSDL2.dylib
+    - dependencies/liblua.5.1.dylib
+  skip_cleanup: true
+  on:
+    tags: true
+
+# Notify developers when build passed/failed.
+notifications:
+  irc:
+    template:
+      - "%{repository}#%{build_number} %{commit} %{author}: %{message} %{build_url}"
+    channels:
+      - "irc.freenode.net#openra"
+    use_notice: true
+    skip_join: true
