@@ -1,0 +1,2 @@
+libSDL2.dylib and liblua.5.1.dylib are legacy 32 bit libraries that are no longer used.
+These libraries are referenced directly on the master branch from older versions of OpenRA (pre November 2017), so cannot be removed.
