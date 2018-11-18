@@ -1,7 +1,7 @@
 .PHONY: all launcher clean sdl2 lua
 .DEFAULT_GOAL := launcher
 
-SDL2_VERSION := 2.0.7
+SDL2_VERSION := 2.0.9
 LUA_VERSION := 5.1.5
 
 all: OpenRA launchgame
