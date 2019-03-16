@@ -45,7 +45,5 @@
 	<string>{FAQ_URL}</string>
 	<key>JoinServerUrlScheme</key>
 	<string>{JOIN_SERVER_URL_SCHEME}</string>
-	<key>NSRequiresAquaSystemAppearance</key>
-	<false/>
 </dict>
 </plist>
