@@ -1,8 +1,9 @@
-.PHONY: all launcher clean sdl2 lua
+.PHONY: all launcher clean sdl2 lua freetype
 .DEFAULT_GOAL := launcher
 
 SDL2_VERSION := 2.0.9
 LUA_VERSION := 5.1.5
+FREETYPE_VERSION := 2.10.0
 
 all: OpenRA launchgame
 
@@ -43,6 +44,14 @@ lua:
 	@cd lua-$(LUA_VERSION)/src/ && make liblua.5.1.dylib
 	@cp lua-$(LUA_VERSION)/src/liblua.$(LUA_VERSION).dylib dependencies/liblua.5.1.dylib
 	@rm -rf lua-$(LUA_VERSION).tar.gz lua-$(LUA_VERSION)
+
+freetype:
+	@curl -s -L -O https://download.savannah.gnu.org/releases/freetype/freetype-$(FREETYPE_VERSION).tar.bz2
+	@tar xf freetype-$(FREETYPE_VERSION).tar.bz2
+	@cd freetype-$(FREETYPE_VERSION) && ./configure --with-png=no --with-harfbuzz=no --with-zlib=no --with-bzip2=no CFLAGS="-m64 -mmacosx-version-min=10.7" LDFLAGS="-m64 -mmacosx-version-min=10.7" --prefix "$(PWD)/build/freetype"
+	@cd freetype-$(FREETYPE_VERSION) && make && make install
+	@cp build/freetype/lib/libfreetype.6.dylib dependencies/
+	@rm -rf freetype-$(FREETYPE_VERSION).tar.gz freetype-$(FREETYPE_VERSION) build/freetype
 
 clean:
 	@rm -rf build
