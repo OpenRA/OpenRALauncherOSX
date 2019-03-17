@@ -36,24 +36,6 @@ NSTask *gameTask;
 	return @"OpenRA";
 }
 
-- (void)showMonoPromptWithMinimumVersion: (NSString *)monoMinVersion
-{
-	NSString *modName = [self modName];
-	NSString *title = [NSString stringWithFormat: @"Cannot launch %@", modName];
-	NSString *message = [NSString stringWithFormat: @"%@ requires Mono %@ or later. Please install Mono and try again.", modName, monoMinVersion];
-
-	NSAlert *alert = [[NSAlert alloc] init];
-	[alert setMessageText:title];
-	[alert setInformativeText:message];
-	[alert addButtonWithTitle:@"Download Mono"];
-	[alert addButtonWithTitle:@"Quit"];
-	NSInteger answer = [alert runModal];
-	[alert release];
-
-	if (answer == NSAlertFirstButtonReturn)
-		[[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"http://www.mono-project.com/download/"]];
-}
-
 - (void)showCrashPrompt
 {
 	NSString *modName = [self modName];
@@ -173,7 +155,7 @@ NSTask *gameTask;
 	NSString *exePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: @"Contents/MacOS/"];
 	NSString *gamePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: @"Contents/Resources/"];
 
-	NSString *launchPath = [exePath stringByAppendingPathComponent: @"launchgame"];
+	NSString *launchPath = [exePath stringByAppendingPathComponent: @"mono"];
 	NSString *appPath = [exePath stringByAppendingPathComponent: @"OpenRA"];
 	NSString *engineLaunchPath = [self resolveTranslocatedPath: appPath];
 
@@ -187,7 +169,7 @@ NSTask *gameTask;
 
 	[launchArgs addObjectsFromArray: gameArgs];
 
-	NSLog(@"Running launchgame with arguments:");
+	NSLog(@"Running mono with arguments:");
 	for (size_t i = 0; i < [launchArgs count]; i++)
 		NSLog(@"%@", [launchArgs objectAtIndex: i]);
 
@@ -195,6 +177,12 @@ NSTask *gameTask;
 	[gameTask setCurrentDirectoryPath: gamePath];
 	[gameTask setLaunchPath: launchPath];
 	[gameTask setArguments: launchArgs];
+
+	NSMutableDictionary *environment = [NSMutableDictionary dictionaryWithDictionary: [[NSProcessInfo processInfo] environment]];
+	[environment setObject: [exePath stringByAppendingPathComponent: @"lib/mono/4.5"] forKey: @"MONO_PATH"];
+	[environment setObject: [exePath stringByAppendingPathComponent: @"etc"] forKey: @"MONO_CFG_DIR"];
+	[environment setObject: [exePath stringByAppendingPathComponent: @"etc/mono/config"] forKey: @"MONO_CONFIG"];
+	[gameTask setEnvironment: environment];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver: self
@@ -272,20 +260,7 @@ NSTask *gameTask;
 	[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
 
-	if (ret == RET_MONO_NOT_FOUND || ret == RET_MONO_INIT_ERROR || ret == RET_MONO_VERSION_OUTDATED)
-	{
-		NSString *monoMinVersion = @"4.6";
-		NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
-		if (plist)
-		{
-			NSString *versionValue = [plist objectForKey:@"MonoMinVersion"];
-			if (versionValue && [versionValue length] > 0)
-				monoMinVersion = versionValue;
-		}
-
-		[self showMonoPromptWithMinimumVersion: monoMinVersion];
-	}
-	else if (ret != RET_OPENRA_RESTARTING)
+	if (ret != RET_OPENRA_RESTARTING)
 	{
 		[self showCrashPrompt];
 	}

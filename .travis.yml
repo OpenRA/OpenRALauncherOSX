@@ -12,7 +12,7 @@ script:
 
 # Compile dependencies and build the launcher.zip before deploying
 before_deploy:
- - make sdl2 lua freetype
+ - make sdl2 lua freetype mono
  - make launcher
 
 deploy:
