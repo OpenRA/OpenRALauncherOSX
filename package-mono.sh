@@ -1,6 +1,6 @@
 #!/bin/bash
-MONO_VERSION=$1
-OUTPUT="$(pwd)/dependencies"
+MONO_VERSION="$1"
+OUTPUT="$2"
 mkdir -p "${OUTPUT}/etc/mono/4.5/"
 mkdir -p "${OUTPUT}/lib/mono/4.5/"
 

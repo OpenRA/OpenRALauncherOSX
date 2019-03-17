@@ -6,22 +6,22 @@ branches:
    - /^osx-launcher-.*$/
    - master
 
-# Compile only the binaries on default pushes
+# Compile only the main binary on default pushes
 script:
- - make all
+ - make launcher
 
 # Compile dependencies and build the launcher.zip before deploying
 before_deploy:
- - make sdl2 lua freetype mono
- - make launcher
+ - make all
 
 deploy:
   provider: releases
   api_key: ${GH_DEPLOY_API_KEY}
   file:
-    - launcher.zip
-    - dependencies/libSDL2.dylib
-    - dependencies/liblua.5.1.dylib
+    - build/launcher.zip
+    - build/libSDL2.dylib
+    - build/liblua.5.1.dylib
+    - build/libfreetype.6.dylib
   skip_cleanup: true
   on:
     tags: true
