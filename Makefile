@@ -4,7 +4,7 @@
 SDL2_VERSION := 2.0.9
 LUA_VERSION := 5.1.5
 FREETYPE_VERSION := 2.10.0
-MONO_VERSION := 5.10.0
+MONO_VERSION := 5.20.1
 
 all: deps launcher
 
@@ -21,13 +21,13 @@ launcher: OpenRA
 OpenRA: OpenRA.m
 	@echo "Building OpenRA"
 	@mkdir -p build/OpenRA.app/Contents/MacOS/
-	@clang -m64 OpenRA.m -o build/OpenRA.app/Contents/MacOS/OpenRA -framework AppKit -mmacosx-version-min=10.7
+	@clang -m64 OpenRA.m -o build/OpenRA.app/Contents/MacOS/OpenRA -framework AppKit -mmacosx-version-min=10.9
 
 sdl2:
 	@curl -s -L -O http://www.libsdl.org/release/SDL2-$(SDL2_VERSION).tar.gz
 	@tar xf SDL2-$(SDL2_VERSION).tar.gz
 	@rm SDL2-$(SDL2_VERSION).tar.gz
-	@cd SDL2-$(SDL2_VERSION) && ./configure CFLAGS="-m64 -mmacosx-version-min=10.7" LDFLAGS="-m64 -mmacosx-version-min=10.7" --without-x --prefix "$(PWD)/build/SDL2"
+	@cd SDL2-$(SDL2_VERSION) && ./configure CFLAGS="-m64 -mmacosx-version-min=10.9" LDFLAGS="-m64 -mmacosx-version-min=10.9" --without-x --prefix "$(PWD)/build/SDL2"
 	@cd SDL2-$(SDL2_VERSION) && make && make install
 	@mkdir -p build/OpenRA.app/Contents/Resources
 	@cp build/SDL2/lib/libSDL2-2.0.0.dylib build/OpenRA.app/Contents/Resources/libSDL2.dylib
@@ -47,7 +47,7 @@ lua:
 freetype:
 	@curl -s -L -O https://download.savannah.gnu.org/releases/freetype/freetype-$(FREETYPE_VERSION).tar.bz2
 	@tar xf freetype-$(FREETYPE_VERSION).tar.bz2
-	@cd freetype-$(FREETYPE_VERSION) && ./configure --with-png=no --with-harfbuzz=no --with-zlib=no --with-bzip2=no CFLAGS="-m64 -mmacosx-version-min=10.7" LDFLAGS="-m64 -mmacosx-version-min=10.7" --prefix "$(PWD)/build/freetype"
+	@cd freetype-$(FREETYPE_VERSION) && ./configure --with-png=no --with-harfbuzz=no --with-zlib=no --with-bzip2=no CFLAGS="-m64 -mmacosx-version-min=10.9" LDFLAGS="-m64 -mmacosx-version-min=10.9" --prefix "$(PWD)/build/freetype"
 	@cd freetype-$(FREETYPE_VERSION) && make && make install
 	@mkdir -p build/OpenRA.app/Contents/Resources
 	@cp build/freetype/lib/libfreetype.6.dylib build/OpenRA.app/Contents/Resources/libfreetype.6.dylib

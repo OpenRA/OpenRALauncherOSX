@@ -6,8 +6,8 @@ mkdir -p "${OUTPUT}/lib/mono/4.5/"
 
 mkdir mono
 pushd mono
-curl -sLO https://download.mono-project.com/runtimes/raw/mono-${MONO_VERSION}-osx-10.7-x64
-unzip mono-${MONO_VERSION}-osx-10.7-x64
+curl -sLO https://download.mono-project.com/runtimes/raw/mono-${MONO_VERSION}-osx-10.9-x64
+unzip mono-${MONO_VERSION}-osx-10.9-x64
 
 cp bin/mono "${OUTPUT}"
 cp etc/mono/config "${OUTPUT}/etc/mono/"
