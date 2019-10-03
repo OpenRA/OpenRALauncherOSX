@@ -4,7 +4,7 @@
 SDL2_VERSION := 2.0.9
 LUA_VERSION := 5.1.5
 FREETYPE_VERSION := 2.10.0
-MONO_VERSION := 5.20.1
+MONO_VERSION := 6.4.0
 
 all: deps launcher
 
