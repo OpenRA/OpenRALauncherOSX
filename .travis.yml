@@ -1,4 +1,6 @@
 os: osx
+language: csharp
+mono: 6.4.0
 
 # Only watch the development branch and tagged release.
 branches:

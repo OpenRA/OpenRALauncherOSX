@@ -4,7 +4,6 @@
 SDL2_VERSION := 2.0.9
 LUA_VERSION := 5.1.5
 FREETYPE_VERSION := 2.10.0
-MONO_VERSION := 6.4.0
 
 all: deps launcher
 
@@ -55,7 +54,7 @@ freetype:
 	@rm -rf freetype-$(FREETYPE_VERSION).tar.gz freetype-$(FREETYPE_VERSION) build/freetype
 
 mono:
-	@./package-mono.sh $(MONO_VERSION) $(PWD)/build/OpenRA.app/Contents/MacOS
+	@./package-mono.sh $(PWD)/build/OpenRA.app/Contents/MacOS
 
 clean:
 	@rm -rf build
