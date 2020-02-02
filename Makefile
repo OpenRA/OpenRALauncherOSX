@@ -1,7 +1,7 @@
 .PHONY: all deps launcher sdl2 lua freetype mono clean
 .DEFAULT_GOAL := launcher
 
-SDL2_VERSION := 2.0.9
+SDL2_VERSION := 2.0.10
 LUA_VERSION := 5.1.5
 FREETYPE_VERSION := 2.10.0
 
