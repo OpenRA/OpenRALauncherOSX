@@ -54,7 +54,7 @@ freetype:
 	@rm -rf freetype-$(FREETYPE_VERSION).tar.gz freetype-$(FREETYPE_VERSION) build/freetype
 
 mono:
-	@./package-mono.sh $(PWD)/build/OpenRA.app/Contents/MacOS
+	@./package-mono.sh $(PWD)/build/OpenRA.app
 
 clean:
 	@rm -rf build

@@ -179,9 +179,9 @@ NSTask *gameTask;
 	[gameTask setArguments: launchArgs];
 
 	NSMutableDictionary *environment = [NSMutableDictionary dictionaryWithDictionary: [[NSProcessInfo processInfo] environment]];
-	[environment setObject: [exePath stringByAppendingPathComponent: @"lib/mono/4.5"] forKey: @"MONO_PATH"];
-	[environment setObject: [exePath stringByAppendingPathComponent: @"etc"] forKey: @"MONO_CFG_DIR"];
-	[environment setObject: [exePath stringByAppendingPathComponent: @"etc/mono/config"] forKey: @"MONO_CONFIG"];
+	[environment setObject: [gamePath stringByAppendingPathComponent: @"lib/mono/4.5"] forKey: @"MONO_PATH"];
+	[environment setObject: [gamePath stringByAppendingPathComponent: @"etc"] forKey: @"MONO_CFG_DIR"];
+	[environment setObject: [gamePath stringByAppendingPathComponent: @"etc/mono/config"] forKey: @"MONO_CONFIG"];
 	[gameTask setEnvironment: environment];
 
 	[[NSNotificationCenter defaultCenter]
