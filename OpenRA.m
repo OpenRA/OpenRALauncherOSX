@@ -54,8 +54,7 @@ NSTask *gameTask;
 	if (answer == NSAlertFirstButtonReturn)
 	{
 		NSString *logDir = [@"~/Library/Application Support/OpenRA/Logs/" stringByExpandingTildeInPath];
-		NSString *logFile = [logDir stringByAppendingPathComponent: @"exception.log"];
-		[[NSWorkspace sharedWorkspace] selectFile: logFile inFileViewerRootedAtPath: logDir];
+		[[NSWorkspace sharedWorkspace] openFile: logDir withApplication:@"Finder"];
 	}
 	else if (answer == NSAlertSecondButtonReturn)
 	{
