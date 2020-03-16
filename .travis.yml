@@ -24,6 +24,7 @@ deploy:
     - build/libSDL2.dylib
     - build/liblua.5.1.dylib
     - build/libfreetype.6.dylib
+    - build/libopenal.1.dylib
   skip_cleanup: true
   on:
     tags: true

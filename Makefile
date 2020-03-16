@@ -4,10 +4,11 @@
 SDL2_VERSION := 2.0.10
 LUA_VERSION := 5.1.5
 FREETYPE_VERSION := 2.10.0
+OPENALSOFT_VERSION := 1.20.1
 
 all: deps launcher
 
-deps: sdl2 lua freetype mono
+deps: sdl2 lua freetype openalsoft mono
 
 launcher: OpenRA
 	@echo "Generating launcher.zip"
@@ -52,6 +53,16 @@ freetype:
 	@cp build/freetype/lib/libfreetype.6.dylib build/OpenRA.app/Contents/Resources/libfreetype.6.dylib
 	@cp build/freetype/lib/libfreetype.6.dylib build/libfreetype.6.dylib
 	@rm -rf freetype-$(FREETYPE_VERSION).tar.gz freetype-$(FREETYPE_VERSION) build/freetype
+
+openalsoft:
+	@curl -s -L -O https://openal-soft.org/openal-releases/openal-soft-$(OPENALSOFT_VERSION).tar.bz2
+	@tar xf openal-soft-$(OPENALSOFT_VERSION).tar.bz2
+	@cd openal-soft-$(OPENALSOFT_VERSION)/build && cmake .. -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -DALSOFT_EXAMPLES=OFF
+	@cd openal-soft-$(OPENALSOFT_VERSION)/build && make
+	@mkdir -p build/OpenRA.app/Contents/Resources
+	@cp openal-soft-$(OPENALSOFT_VERSION)/build/libopenal.$(OPENALSOFT_VERSION).dylib build/OpenRA.app/Contents/Resources/libopenal.1.dylib
+	@cp openal-soft-$(OPENALSOFT_VERSION)/build/libopenal.$(OPENALSOFT_VERSION).dylib build/libopenal.1.dylib
+	@rm -rf openal-soft-$(OPENALSOFT_VERSION).tar.bz2 openal-soft-$(OPENALSOFT_VERSION)
 
 mono:
 	@./package-mono.sh $(PWD)/build/OpenRA.app
