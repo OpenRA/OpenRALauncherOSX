@@ -30,7 +30,6 @@ sdl2:
 	@cd SDL2-$(SDL2_VERSION) && ./configure CFLAGS="-m64 -mmacosx-version-min=10.9" LDFLAGS="-m64 -mmacosx-version-min=10.9" --without-x --prefix "$(PWD)/build/SDL2"
 	@cd SDL2-$(SDL2_VERSION) && make && make install
 	@mkdir -p build/OpenRA.app/Contents/Resources
-	@cp build/SDL2/lib/libSDL2-2.0.0.dylib build/OpenRA.app/Contents/Resources/libSDL2.dylib
 	@cp build/SDL2/lib/libSDL2-2.0.0.dylib build/libSDL2.dylib
 	@rm -rf SDL2-$(SDL2_VERSION).tar.gz SDL2-$(SDL2_VERSION) build/SDL2
 
@@ -40,7 +39,6 @@ lua:
 	@cd lua-$(LUA_VERSION)/src/ && patch < ../../liblua.patch
 	@cd lua-$(LUA_VERSION)/src/ && make liblua.5.1.dylib
 	@mkdir -p build/OpenRA.app/Contents/Resources
-	@cp lua-$(LUA_VERSION)/src/liblua.$(LUA_VERSION).dylib build/OpenRA.app/Contents/Resources/liblua.5.1.dylib
 	@cp lua-$(LUA_VERSION)/src/liblua.$(LUA_VERSION).dylib build/liblua.5.1.dylib
 	@rm -rf lua-$(LUA_VERSION).tar.gz lua-$(LUA_VERSION)
 
@@ -50,7 +48,6 @@ freetype:
 	@cd freetype-$(FREETYPE_VERSION) && ./configure --with-png=no --with-harfbuzz=no --with-zlib=no --with-bzip2=no CFLAGS="-m64 -mmacosx-version-min=10.9" LDFLAGS="-m64 -mmacosx-version-min=10.9" --prefix "$(PWD)/build/freetype"
 	@cd freetype-$(FREETYPE_VERSION) && make && make install
 	@mkdir -p build/OpenRA.app/Contents/Resources
-	@cp build/freetype/lib/libfreetype.6.dylib build/OpenRA.app/Contents/Resources/libfreetype.6.dylib
 	@cp build/freetype/lib/libfreetype.6.dylib build/libfreetype.6.dylib
 	@rm -rf freetype-$(FREETYPE_VERSION).tar.gz freetype-$(FREETYPE_VERSION) build/freetype
 
@@ -60,7 +57,6 @@ openalsoft:
 	@cd openal-soft-$(OPENALSOFT_VERSION)/build && cmake .. -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -DALSOFT_EXAMPLES=OFF
 	@cd openal-soft-$(OPENALSOFT_VERSION)/build && make
 	@mkdir -p build/OpenRA.app/Contents/Resources
-	@cp openal-soft-$(OPENALSOFT_VERSION)/build/libopenal.$(OPENALSOFT_VERSION).dylib build/OpenRA.app/Contents/Resources/libopenal.1.dylib
 	@cp openal-soft-$(OPENALSOFT_VERSION)/build/libopenal.$(OPENALSOFT_VERSION).dylib build/libopenal.1.dylib
 	@rm -rf openal-soft-$(OPENALSOFT_VERSION).tar.bz2 openal-soft-$(OPENALSOFT_VERSION)
 
