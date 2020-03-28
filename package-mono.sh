@@ -17,14 +17,15 @@ cp bin/mono "${OUTPUT}/Contents/MacOS/"
 sed "s|\$mono_libdir/||g" etc/mono/config > "${OUTPUT}/Contents/Resources/etc/mono/config"
 cp etc/mono/4.5/machine.config "${OUTPUT}/Contents/Resources/etc/mono/4.5/"
 
-# libmono-native-compat.dylib is not packaged in the mkbundle runtime
+# libmono-native-compat.dylib and netstandard.dll aren't packaged in the mkbundle runtime
 # Copy it from the native mono installation (from travis-ci) instead
 cp "/Library/Frameworks/Mono.framework/Versions/${MONO_VERSION}/lib/libmono-native-compat.dylib" "${OUTPUT}/Contents/Resources/lib/mono/4.5/"
+cp "/Library/Frameworks/Mono.framework/Versions/${MONO_VERSION}/lib/mono/4.5/Facades/netstandard.dll" "${OUTPUT}/Contents/Resources/lib/mono/4.5/"
 
 # Runtime dependencies
 # The required files can be found by running the following in the OpenRA engine directory:
 #   cp OpenRA.Game.exe OpenRA.Game.dll # Work around a mkbundle issue where it can't see exes as deps
-#   mkbundle -o foo --simple OpenRA.Game.exe OpenRA.Platforms.Default.dll mods/*/*.dll -L "$(dirname $(which mkbundle))/../lib/mono/4.5/ -L mods/common
+#   mkbundle -o foo --simple OpenRA.Game.exe OpenRA.Platforms.Default.dll mods/*/*.dll -L "$(dirname $(which mkbundle))/../lib/mono/4.5/" -L "$(dirname $(which mkbundle))/../lib/mono/4.5/Facades/" -L mods/common
 # The "Assembly:" lines list the required dlls
 # Note that some assemblies may reference native libraries. These can be reviewed by running
 #   monodis <assembly> | grep extern
