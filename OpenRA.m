@@ -246,16 +246,18 @@ NSTask *gameTask;
 	[gameTask release];
 	gameTask = nil;
 
-	// We're done here
-	if (ret == 0)
-		exit(0);
-
 	// Make the error dialog visible
-	[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
-	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-	[self showCrashPrompt];
+	// HACK: mono returns exit code 11 on macOS 10.12.
+	// We have no idea why, but it does not appear to impact actual gameplay
+	// so we will ignore it to suppress the OpenRA and macOS crash dialogs
+	if (ret != 0 && ret != 11)
+	{
+		[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
+		[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+		[self showCrashPrompt];
+	}
 
-	exit(1);
+	exit(0);
 }
 
 @end
