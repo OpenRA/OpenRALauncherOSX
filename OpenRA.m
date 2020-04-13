@@ -9,11 +9,6 @@
 #import <Cocoa/Cocoa.h>
 #include <dlfcn.h>
 
-#define RET_MONO_NOT_FOUND 131
-#define RET_MONO_INIT_ERROR 132
-#define RET_MONO_VERSION_OUTDATED 133
-#define RET_OPENRA_RESTARTING 1
-
 @interface ORALauncher : NSObject <NSApplicationDelegate>
 - (void)launchGameWithArgs: (NSArray *)gameArgs;
 @end
@@ -258,11 +253,7 @@ NSTask *gameTask;
 	// Make the error dialog visible
 	[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-
-	if (ret != RET_OPENRA_RESTARTING)
-	{
-		[self showCrashPrompt];
-	}
+	[self showCrashPrompt];
 
 	exit(1);
 }
