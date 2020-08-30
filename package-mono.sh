@@ -4,23 +4,27 @@
 MONO_VERSION="6.4.0"
 
 OUTPUT="$1"
-mkdir -p "${OUTPUT}/Contents/MacOS/"
-mkdir -p "${OUTPUT}/Contents/Resources/etc/mono/4.5/"
-mkdir -p "${OUTPUT}/Contents/Resources/lib/mono/4.5/"
+BUILDDIR="$(pwd)/monobuild/"
+mkdir -p "${BUILDDIR}/etc/mono/4.5/"
+mkdir -p "${BUILDDIR}/lib/mono/4.5/"
+
+pwd
+ls monobuild/etc/mono/4.5/
 
 mkdir mono
 pushd mono
 curl -sLO https://download.mono-project.com/runtimes/raw/mono-${MONO_VERSION}-osx-10.9-x64
 unzip "mono-${MONO_VERSION}-osx-10.9-x64"
 
-cp bin/mono "${OUTPUT}/Contents/MacOS/"
-sed "s|\$mono_libdir/||g" etc/mono/config > "${OUTPUT}/Contents/Resources/etc/mono/config"
-cp etc/mono/4.5/machine.config "${OUTPUT}/Contents/Resources/etc/mono/4.5/"
+cp bin/mono "${BUILDDIR}"
+sed "s|\$mono_libdir/||g" etc/mono/config > "${BUILDDIR}/etc/mono/config"
+cp etc/mono/4.5/machine.config "${BUILDDIR}/etc/mono/4.5/"
 
 # libmono-native-compat.dylib and netstandard.dll aren't packaged in the mkbundle runtime
 # Copy it from the native mono installation (from travis-ci) instead
-cp "/Library/Frameworks/Mono.framework/Versions/${MONO_VERSION}/lib/libmono-native-compat.dylib" "${OUTPUT}/Contents/Resources/lib/mono/4.5/"
-cp "/Library/Frameworks/Mono.framework/Versions/${MONO_VERSION}/lib/mono/4.5/Facades/netstandard.dll" "${OUTPUT}/Contents/Resources/lib/mono/4.5/"
+cp "/Library/Frameworks/Mono.framework/Versions/${MONO_VERSION}/lib/libmono-native-compat.dylib" "${BUILDDIR}/lib/mono/4.5/"
+cp "/Library/Frameworks/Mono.framework/Versions/${MONO_VERSION}/lib/mono/4.5/Facades/netstandard.dll" "${BUILDDIR}/lib/mono/4.5/"
+pwd
 
 # Runtime dependencies
 # The required files can be found by running the following in the OpenRA engine directory:
@@ -32,8 +36,12 @@ cp "/Library/Frameworks/Mono.framework/Versions/${MONO_VERSION}/lib/mono/4.5/Fac
 # and looking for extension-less names that are then mapped in etc/mono/config or names that list a .so extension directly.
 
 pushd "lib/mono/4.5" > /dev/null
-cp Mono.Security.dll mscorlib.dll System.Configuration.dll System.Core.dll System.dll System.Numerics.dll System.Security.dll System.Xml.dll "${OUTPUT}/Contents/Resources/lib/mono/4.5/"
+cp Mono.Security.dll mscorlib.dll System.Configuration.dll System.Core.dll System.dll System.Numerics.dll System.Security.dll System.Xml.dll "${BUILDDIR}/lib/mono/4.5/"
 popd > /dev/null
 popd
 
-rm -rf mono
+pushd "monobuild" > /dev/null
+zip "${OUTPUT}/mono.zip" -r -9 * --quiet
+popd > /dev/null
+
+rm -rf mono monobuild

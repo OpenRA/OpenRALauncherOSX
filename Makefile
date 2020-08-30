@@ -61,7 +61,7 @@ openalsoft:
 	@rm -rf openal-soft-$(OPENALSOFT_VERSION).tar.bz2 openal-soft-$(OPENALSOFT_VERSION)
 
 mono:
-	@./package-mono.sh $(PWD)/build/OpenRA.app
+	@./package-mono.sh $(PWD)/build
 
 clean:
 	@rm -rf build
