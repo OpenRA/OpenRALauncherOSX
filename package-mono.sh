@@ -20,11 +20,14 @@ cp bin/mono "${BUILDDIR}"
 sed "s|\$mono_libdir/||g" etc/mono/config > "${BUILDDIR}/etc/mono/config"
 cp etc/mono/4.5/machine.config "${BUILDDIR}/etc/mono/4.5/"
 
-# libmono-native-compat.dylib and netstandard.dll aren't packaged in the mkbundle runtime
+# libmono-native-compat.dylib and several facade dlls aren't packaged in the mkbundle runtime
 # Copy it from the native mono installation (from travis-ci) instead
 cp "/Library/Frameworks/Mono.framework/Versions/${MONO_VERSION}/lib/libmono-native-compat.dylib" "${BUILDDIR}/lib/mono/4.5/"
 cp "/Library/Frameworks/Mono.framework/Versions/${MONO_VERSION}/lib/mono/4.5/Facades/netstandard.dll" "${BUILDDIR}/lib/mono/4.5/"
-pwd
+
+pushd "/Library/Frameworks/Mono.framework/Versions/${MONO_VERSION}/lib/mono/4.5/Facades" > /dev/null
+cp Microsoft.Win32.Registry.dll netstandard.dll System.Security.AccessControl.dll System.Security.Principal.Windows.dll "${BUILDDIR}/lib/mono/4.5/"
+popd > /dev/null
 
 # Runtime dependencies
 # The required files can be found by running the following in the OpenRA engine directory:
@@ -36,7 +39,7 @@ pwd
 # and looking for extension-less names that are then mapped in etc/mono/config or names that list a .so extension directly.
 
 pushd "lib/mono/4.5" > /dev/null
-cp Mono.Security.dll mscorlib.dll System.Configuration.dll System.Core.dll System.dll System.Numerics.dll System.Security.dll System.Xml.dll "${BUILDDIR}/lib/mono/4.5/"
+cp Mono.Security.dll mscorlib.dll System.Configuration.dll System.Core.dll System.dll System.Numerics.dll System.Runtime.Serialization.dll System.Security.dll System.Xml.dll System.Xml.Linq.dll "${BUILDDIR}/lib/mono/4.5/"
 popd > /dev/null
 popd
 
